@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C2Kbin - Test post</title>
+    <title>C2Kbin - <%= post.title %></title>
     <style>
 
         body {
@@ -27,11 +27,11 @@
 <body>
     <main>
         <span>Title:</span>
-        <span id="title">Test title</span><br>
+        <span id="title"><%= post.title %></span><br>
         <span>Author:</span>
-        <span id="author">Test author</span><br>
+        <span id="author"><%= post.author %></span><br>
         <span>Content:</span>
-        <pre id="content">Test content</pre>
+        <pre id="content"><%= post.content %></pre>
     </main>
 
 </body>
