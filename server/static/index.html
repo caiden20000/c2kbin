@@ -1,39 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C2Kbin - Create</title>
-    <style>
-
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        #create {
-            display: flex;
-            flex-direction: column;
-            width: 50vw;
-            max-width: 500px;
-        }
-
-        #content {
-            min-height: 150px;
-        }
-    </style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+	<title>C2Kbin - Create New</title>
 </head>
+
 <body>
-    <form action="create" method="post" id="create">
-        <label for="title">Title</label>
-        <input type="text" name="title"><br>
-        <label for="author">Author</label>
-        <input type="text" name="author"><br>
-        <label for="content">Content</label>
-        <textarea name="content" form="create" id="content" required></textarea><br>
-        <input type="submit" value="Upload">
-    </form>
+
+  <header class="page-header">
+    <h1>~ C2Kbin ~</h1>
+  </header>
+
+	<form action="create" method="post" id="create-form">
+    <span class="form-group">
+      <label for="author-input">Author (optional)</label>
+		  <input type="text" name="author" id="author-input">
+    </span><br>
+		<span class="form-group">
+      <label for="title-input">Title</label>
+      <input type="text" name="title" id="title-input">
+    </span><br>
+    <span class="form-group">
+      <label for="content-input">Content</label>
+      <textarea name="content" form="create-form" id="content-input" required></textarea>
+    </span><br>
+		<input type="submit" value="Upload">
+  </form>
 
 </body>
+
 </html>

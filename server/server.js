@@ -1,6 +1,11 @@
 const express = require('express');
 const app = express();
+const path = require('path');
 const db = require('./database-driver');
+
+
+// Allow client to request CSS files on the ROOT HOST/
+app.use(express.static(path.join(__dirname, 'styles')));
 
 db.init().then(_ => console.log(">> Database connection initialized."));
 app.set('view engine', 'ejs');
@@ -9,6 +14,7 @@ app.set('view engine', 'ejs');
 // Express uses middleware to parse POST bodies due to many different possibilities.
 // All this does is let form-data be accessible from req.body
 app.use(express.urlencoded({ extended: true }));
+
 
 app.get('/', (req, res) => {
     res.redirect('/create');
@@ -22,8 +28,12 @@ app.get('/create', (req, res) => {
 // Uploading a post!
 app.post('/create', (req, res) => {
     db.storePostObject(req.body).then( uid => {
-        res.redirect('/' + uid);
-        console.log("Made new post at /" + uid);
+        if (uid == null) {
+            res.status(400).send("400 Error");
+        } else {
+            res.redirect('/' + uid);
+            console.log("Made new post at /" + uid);
+        }
     } );
 });
 
