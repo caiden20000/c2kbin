@@ -1,3 +1,5 @@
+require('dotenv').config(); // Sets local env variables from .env file
+// I have NODE_ENV = production, so that stack traces aren't leaked to the client.
 const express = require('express');
 const app = express();
 const path = require('path');
@@ -13,7 +15,7 @@ app.set('view engine', 'ejs');
 // The following is required in order to parse form data from POST requests.
 // Express uses middleware to parse POST bodies due to many different possibilities.
 // All this does is let form-data be accessible from req.body
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
 
 app.get('/', (req, res) => {
