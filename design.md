@@ -20,31 +20,33 @@ If a client tries to POST to anything other than HOST/create, the server returns
 
 EDIT: We'll be sending a FORM object, NOT a JSON object.
 
+### Second iteration
+
+First iteration is complete. Some things aren't as described above, but I'm not going back to change the documentation because this isn't documentation, it's more of a TODO list.
+The second iteration will have:
+2.1 = IP rate limiting
+2.15 = rate limiting by size and frequency 
+2.2 = global rate limiting
+2.3 = console printout of how much space the DB is taking up
+2.4 = More DB metrics
+2.4 = encrypted posts
+
+Motto: "Let's gooooooooo"
+
+2.1: IP rate limit will be like 1 post every 30 seconds.
+2.15: Size rate limiting will also rate limit you if you post too much size per whatever. Max size per POST request right now is set to 1mb, so the max one IP could post is 2mb per minute. This might be fine?
+2.2: Global rate limiting is for the safety of the server. It might be something large like 1 post every second. Then again, I might not do it at all, since it seems messy: How would someone queue for a post? How do we determine FCFS? What actual problem is it solving??
+2.3: This one is a good health indicator for the DB and how it's being used.
+2.4: I added this version so that I could get a good understanding of how the DB is being used:
+        Average posts per second
+        Average size per post
+        Average posts per IP
+        Average visits per post
+    We should just record all this data into another part of the DB, then use a separate webpage to display graphs on this information, like HOST/stats or something.
+2.5: Encryption of posts seems pretty cool. The user will give a password at post creation time, and when the post is processed by the server, we will encrypt the post with the hash of that password. When a user attempts to access an encrypted post, they're met with a password modal. If the password they give corretly decrypts a prepended control string (either a static control or a hash of the rest of the data), the post is then returned.
+    This only really encrypts the post at rest, on the server. In transit it is still vulnerable. However, since the server I'm running it on only uses HTTPS, it might be theoretically encrypted in motion?? I'm not sure about that.
 
 
-
-### old rambling documentation outlining an encryption method, will be second or third iteration
-
-We'll have an API, ofc. Call POST to HOST/create with your message enclosed in a JSON object like so:
-
-{
-    "title": "Example Post",
-    "content": "Example content, this is the main body of the paste.",
-    "author": "unused",
-}
-
-Then the backend will store it in an SQLite DB file. We will store the whole JSON object as an encrypted blob.
-The blob will be assigned a random 16 character B64 string. The encryption key will be determined after.
-When a post is requested to be posted as unencrypted, the encryption key will be identical to the URL.
-When a post is requested to be encrypted with a password, the key will be that password URI encoded, then hashed.
-To view an unencrypted post, you GET the URL: HOST/Ggo+eaNe73Nqje
-To view an encrypted post, you GET the URL with a query for the key: HOST/eJeg+ej_ebxyTeGE?key=secret_password
-If the key doesn't decrypt the JSON object properly, or if no key is provided for an encrypted post, a 404 is returned, NOT a 403 or something. This is an attempt to mitigate knowledge of the resources on the server.
-
-
-
-
-The POST requests will be limited to avoid spam or DOS. I'm thinking 1 post every 20 seconds is reasonable.
 
 
 
