@@ -1,5 +1,7 @@
 const PostModel = require('./model/post.model');
+const EncryptedPostModel = require('./model/encryptedPost.model');
 const mongoose = require('mongoose');
+const encryption = require('./encryption');
 
 async function init() {
     return mongoose.connect('mongodb://127.0.0.1:27017/test');
@@ -8,7 +10,6 @@ async function init() {
 
 function validatePostObject(postObject) {
     if (postObject == undefined) return false;
-    console.log(postObject)
     const properties = Object.keys(postObject);
     if (properties == undefined) return false;
 
@@ -21,17 +22,40 @@ async function storePostObject(postObject) {
     if (validatePostObject(postObject) == false) return null;
 
     const newID = await _generatePostID();
-    console.log("NEW ID", newID)
-    const newPost = new PostModel({
-        uid: newID, // TODO, add uid to schema
-        title: postObject.title,
-        author: postObject.author,
-        content: postObject.content
-    });
 
-    // May throw unhandled errors
-    const result = await newPost.save();
-    return newID;
+    if (postObject.password != "" && postObject.password != undefined) {
+        // Encrpted post request
+
+        const plaintext = JSON.stringify({
+            title: postObject.title,
+            author: postObject.author,
+            content: postObject.content
+        });
+        const ciphertext = encryption.encrypt(plaintext, postObject.password);
+
+        const newEncryptedPost = new EncryptedPostModel({
+            uid: newID,
+            data: ciphertext
+        });
+
+        const result = newEncryptedPost.save();
+        return newID;
+
+    } else {
+        // Unencrypted post request
+
+        const newPost = new PostModel({
+            uid: newID, // TODO, add uid to schema
+            title: postObject.title,
+            author: postObject.author,
+            content: postObject.content
+        });
+    
+        // May throw unhandled errors
+        const result = await newPost.save();
+        return newID;
+
+    }
 }
 
 // returns null if nothing is found
@@ -39,6 +63,18 @@ async function retrievePostObject(id) {
     // TODO
     const foundPost = await PostModel.findOne({ uid: id }).exec();
     return foundPost;
+}
+
+async function doesEncryptedPostObjectExist(id) {
+    const foundPost = await EncryptedPostModel.findOne({ uid: id }).exec();
+    return foundPost != null;
+}
+
+async function retrieveEncryptedPostObject(id, password) {
+    const foundPost = await EncryptedPostModel.findOne({ uid: id }).exec();
+    if (foundPost == null) return null;
+    const decrypted = encryption.decrypt(foundPost.data, password);
+    return JSON.parse(decrypted);
 }
 
 // Also verifies ID does not yet exist in DB
@@ -67,9 +103,13 @@ async function _generatePostID() {
     return null;
 }
 
+
+
 module.exports = {
     init: init,
     validatePostObject: validatePostObject,
     storePostObject: storePostObject,
-    retrievePostObject, retrievePostObject
+    retrievePostObject, retrievePostObject,
+    doesEncryptedPostObjectExist: doesEncryptedPostObjectExist,
+    retrieveEncryptedPostObject: retrieveEncryptedPostObject
 }

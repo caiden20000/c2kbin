@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+	<title>C2Kbin - <%= uid %></title>
+</head>
+
+<body>
+
+  <header class="page-header">
+    <h1><%= uid %></h1>
+  </header>
+
+	<form method="post" id="create-form">
+    <span class="form-group">
+      <label for="password-input">Password Required</label>
+      <input type="text" name="password" id="password-input">
+      <p class="subtitle">
+        This bin is encrypted. To view it, a password is required.
+      </p>
+    </span><br>
+		<input type="submit" value="Decrypt" id="decrypt-button">
+  </form>
+
+</body>
+
+</html>

@@ -42,8 +42,37 @@ app.post('/create', (req, res) => {
 // Attempting to access a post
 app.get('/:id', (req, res) => {
     db.retrievePostObject(req.params.id).then( postObject => {
-        if (postObject == null) res.status(404).send('404 Not Found');
-        else res.render('content-template', { post: postObject });
+        // res.render('content-template', { post: postObject });
+        // return;
+        if (postObject != null) res.render('content-template', { post: postObject });
+        else {
+            db.doesEncryptedPostObjectExist(req.params.id).then( exists => {
+                if (exists == false) res.status(404).send('404 Not Found');
+                else {
+                    res.render('encrypted-template', { uid: req.params.id });
+                }
+            })
+        }
+    });
+});
+
+// Decrypting a post
+app.post('/:id', (req, res) => {
+    db.retrievePostObject(req.params.id).then( postObject => {
+        // Check if it's a non-encrypted post
+        if (postObject != null) res.status(405).send('405 Method Not Allowed');
+        else {
+            // If it's encrypted, try to decrypt.
+            db.retrieveEncryptedPostObject(req.params.id, req.body.password).then(
+                encryptedPostObject => {
+                    if (encryptedPostObject != null) {
+                        res.render('content-template', { post: encryptedPostObject });
+                    } else {
+                        res.status(404).send('404 Not Found');
+                    }
+                }
+            );
+        }
     });
 });
 
