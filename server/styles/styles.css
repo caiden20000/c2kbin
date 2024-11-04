@@ -1,9 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 
-:root, html, body {
+:root,
+html,
+body {
   padding: 0;
   margin: 0;
-  font-family: "Outfit", sans-serif;
+  font-family: 'Outfit', sans-serif;
 }
 
 body {
@@ -12,7 +14,8 @@ body {
   align-items: center;
 }
 
-#create-form, main {
+#create-form,
+main {
   display: flex;
   flex-direction: column;
   width: 50vw;
@@ -27,7 +30,7 @@ body {
   max-width: 150px;
 }
 
-.display-label {
+.display-label, .subtitle {
   font-size: 12px;
   color: #777;
 }
@@ -37,7 +40,7 @@ pre#content {
   display: block;
   text-align: left;
   padding: 0;
-  
+
   white-space: pre-wrap;
 }
 
@@ -50,8 +53,8 @@ header.page-header {
   align-items: center;
   justify-content: center;
 
-  background-color: #CCC;
-  border-bottom: 2px groove #FFF;
+  background-color: #ccc;
+  border-bottom: 2px groove #fff;
 }
 
 .form-group {
